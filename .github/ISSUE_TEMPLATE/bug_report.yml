@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in J2TEAM Code does not work as it should
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: macOS 26.1 (arm64)
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options:
+        - Desktop app
+        - Web UI / PWA
+        - CLI
+        - Mobile app
+        - Other
+  - type: input
+    id: provider
+    attributes:
+      label: Agent provider
+      placeholder: claude, codex, gemini…
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or debug bundle
+      description: Paste relevant log lines, or attach the zip from Help → Report a Problem…. Remove secrets first.
+      render: text
