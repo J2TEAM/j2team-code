@@ -1,7 +1,177 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-21T10:30:19.422Z",
+  "generatedAt": "2026-11-21T11:16:05.892Z",
   "engines": {
+    "postgresql": {
+      "defaultVersion": "18.7",
+      "versions": [
+        {
+          "version": "18.7",
+          "major": 18,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-18.7.0/postgresql-18.7.0-aarch64-apple-darwin.tar.gz",
+              "sha256": "86456c0ed99d2466524eaa074db6580cf7d748b91042e252c83eaca9a9d216e7",
+              "sizeBytes": 88965986,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-18.7.0/postgresql-18.7.0-x86_64-apple-darwin.tar.gz",
+              "sha256": "9cd649259d6bf4af60a235e772c83853df215b63f4c1967c2eed7f9376aefb89",
+              "sizeBytes": 92187545,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-18.7.0/postgresql-18.7.0-x86_64-pc-windows-msvc.tar.gz",
+              "sha256": "6e054adb854dbed1f78f9933a1c65737d85a47d2446ce0e9b5f055fb3794fe5c",
+              "sizeBytes": 49777647,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            }
+          }
+        },
+        {
+          "version": "17.12",
+          "major": 17,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-17.12.0/postgresql-17.12.0-aarch64-apple-darwin.tar.gz",
+              "sha256": "2f752033b208f9a6a12ef64a9ee23bf19149cff160841980db1e221bf7d24809",
+              "sizeBytes": 90196480,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-17.12.0/postgresql-17.12.0-x86_64-apple-darwin.tar.gz",
+              "sha256": "34ba0eca0f15776b4ab9a07b2decc6fb0b1910a57870ad7d7dacb7399b43c9bd",
+              "sizeBytes": 93377231,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-17.12.0/postgresql-17.12.0-x86_64-pc-windows-msvc.tar.gz",
+              "sha256": "11c843939c303aceb70ad79d4c3c27da4b7dec2ffb2d5022ec8edd501517b21b",
+              "sizeBytes": 49402184,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            }
+          }
+        },
+        {
+          "version": "16.16",
+          "major": 16,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-16.16.0/postgresql-16.16.0-aarch64-apple-darwin.tar.gz",
+              "sha256": "b7f002d554cd8a916d189e24b8f885d088b7909bb6d2de092f82c10274cb8251",
+              "sizeBytes": 89018605,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-16.16.0/postgresql-16.16.0-x86_64-apple-darwin.tar.gz",
+              "sha256": "6bcc3f98c76fdb4b52bf4e59781308ea996058941566579a0961b3a25626b6bb",
+              "sizeBytes": 92163354,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-16.16.0/postgresql-16.16.0-x86_64-pc-windows-msvc.tar.gz",
+              "sha256": "4557b8251bb967c1c09eab57439fb2f1179d35c70debfc692fe637bb08d2f20c",
+              "sizeBytes": 48702594,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            }
+          }
+        },
+        {
+          "version": "15.20",
+          "major": 15,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-15.20.0/postgresql-15.20.0-aarch64-apple-darwin.tar.gz",
+              "sha256": "b4f28bbbcb5f195df3f84b5ad9ab8ee60d0fab44e60fdf4b1036f0c7e1451a79",
+              "sizeBytes": 36964569,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-15.20.0/postgresql-15.20.0-x86_64-apple-darwin.tar.gz",
+              "sha256": "271f3cd94dedd576a6c4a48bb8da02382cffcca3f8112984facf79596aaaf68a",
+              "sizeBytes": 37556452,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-15.20.0/postgresql-15.20.0-x86_64-pc-windows-msvc.tar.gz",
+              "sha256": "a5f192b45d51d4ff59f33ca1549e6a7e0b8c2727c5e87f01163755c572459c19",
+              "sizeBytes": 84342197,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            }
+          }
+        },
+        {
+          "version": "14.25",
+          "major": 14,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-14.25.0/postgresql-14.25.0-aarch64-apple-darwin.tar.gz",
+              "sha256": "35e191e6a20a86f9eb2a1b9d091ba0b6b5cad51fcbf5627080055194b1418871",
+              "sizeBytes": 27517046,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-14.25.0/postgresql-14.25.0-x86_64-apple-darwin.tar.gz",
+              "sha256": "ddb521888f8a3868d4ec48b23d07f936acec1a7109d891ef10ed9b19a8742116",
+              "sizeBytes": 27931984,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/postgresql-14.25.0/postgresql-14.25.0-x86_64-pc-windows-msvc.tar.gz",
+              "sha256": "5545e016cc4d88d56595434bd54c1b3492c3cd12231ac0caa50cdf7548481859",
+              "sizeBytes": 86395917,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "PostgreSQL"
+            }
+          }
+        }
+      ]
+    },
     "mysql": {
       "defaultVersion": "8.4.13",
       "versions": [
@@ -113,6 +283,107 @@
               "stripComponents": 1,
               "binDir": "bin",
               "license": "GPL-2.0-only"
+            }
+          }
+        }
+      ]
+    },
+    "valkey": {
+      "defaultVersion": "9.0.8",
+      "versions": [
+        {
+          "version": "9.2.0",
+          "major": 9,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-9.2.0/valkey-9.2.0-darwin-arm64.tar.gz",
+              "sha256": "e30d763d8633eaf0c956dc28ec3f7c19db2c62d5314c1485d8dd2ae22dde2363",
+              "sizeBytes": 1903958,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "11.0",
+              "license": "BSD-3-Clause"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-9.2.0/valkey-9.2.0-darwin-x64.tar.gz",
+              "sha256": "ae4eac3e7d451b52f5a0ac7ed0dc10390997d2c18e0c51ae578a25c55b24f80a",
+              "sizeBytes": 2120955,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "11.0",
+              "license": "BSD-3-Clause"
+            }
+          }
+        },
+        {
+          "version": "9.0.8",
+          "major": 9,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-9.0.8/valkey-9.0.8-darwin-arm64.tar.gz",
+              "sha256": "81f1cdd6b4717357a8f5d9981f30bd19c5369326825ffe235ebac714a94fa474",
+              "sizeBytes": 1232422,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "11.0",
+              "license": "BSD-3-Clause"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-9.0.8/valkey-9.0.8-darwin-x64.tar.gz",
+              "sha256": "cde8cc9e98a47ffa33ec88da2973ceeed907a97c17bc2d04ff1a56cb414fe363",
+              "sizeBytes": 1344427,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "11.0",
+              "license": "BSD-3-Clause"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-9.0.8/valkey-9.0.8-win32-x64.tar.gz",
+              "sha256": "840f0c3a8f2d9c53b0070ec511f3b4b9731cb8ace6a18d195a93c1dd6c2ccab0",
+              "sizeBytes": 6540467,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "BSD-3-Clause"
+            }
+          }
+        },
+        {
+          "version": "8.1.12",
+          "major": 8,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-8.1.12/valkey-8.1.12-darwin-arm64.tar.gz",
+              "sha256": "856a350e31fe1e9fabc1f6da67d0eb33a54eb9207c17d7e4e0833b71c13efd21",
+              "sizeBytes": 1160470,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "11.0",
+              "license": "BSD-3-Clause"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-8.1.12/valkey-8.1.12-darwin-x64.tar.gz",
+              "sha256": "0d9f5cc22c2e0199eed0c76d5080ff989090df88bcd2b19ceaf5901bca7406ab",
+              "sizeBytes": 1265298,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "11.0",
+              "license": "BSD-3-Clause"
+            },
+            "win32-x64": {
+              "url": "https://github.com/J2TEAM/j2team-code/releases/download/valkey-8.1.12/valkey-8.1.12-win32-x64.tar.gz",
+              "sha256": "76149e76e629fd0c50064d2ac9fdce20a94d9f0975dfa988e6a5ae896b10779d",
+              "sizeBytes": 6205555,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "BSD-3-Clause"
             }
           }
         }
