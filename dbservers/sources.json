@@ -1,0 +1,30 @@
+{
+  "$comment": "Which release series refresh-manifest picks up per engine. The newest patch of each series goes in; defaultSeries names the one new installs get.",
+  "repository": "J2TEAM/j2team-code",
+  "engines": {
+    "postgresql": {
+      "license": "PostgreSQL",
+      "series": ["14", "15", "16", "17", "18"],
+      "defaultSeries": "18"
+    },
+    "mysql": {
+      "license": "GPL-2.0-only",
+      "series": ["8.0", "8.4", "9.7"],
+      "innovation": { "major": 9, "firstMinor": 8 },
+      "defaultSeries": "8.4",
+      "patchProbe": { "maxPatch": 80, "missesBeforeStop": 6, "fallbackPatches": 6 },
+      "macosSuffixes": ["macos13", "macos14", "macos15", "macos26", "macos27"]
+    },
+    "valkey": {
+      "license": "BSD-3-Clause",
+      "series": ["8.1", "9.0", "9.2"],
+      "defaultSeries": "9.0",
+      "macosDeploymentTarget": "11.0"
+    },
+    "mongodb": {
+      "license": "SSPL-1.0",
+      "series": ["7.0", "8.0"],
+      "defaultSeries": "8.0"
+    }
+  }
+}

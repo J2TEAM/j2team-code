@@ -1,0 +1,162 @@
+# Builds Valkey (BSD-3-Clause) from the official source tag for the series in
+# dbservers/sources.json and publishes release `valkey-<version>`.
+# macOS arm64 and x64 are required. Windows x64 is a spike (MSYS2/Cygwin runtime, the
+# redis-windows approach): its job may fail without blocking the release, which then
+# simply has no Windows archive.
+name: Build Valkey
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: Space-separated Valkey versions (blank = newest of each series in sources.json)
+        required: false
+        default: ''
+      force:
+        description: Rebuild and replace a release that already exists
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-valkey
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.pick.outputs.versions }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSIONS: ${{ inputs.versions }}
+          FORCE: ${{ inputs.force && '1' || '0' }}
+        run: |
+          list=$VERSIONS
+          if [ -z "$list" ]; then
+            tags=$(gh release list -R valkey-io/valkey --exclude-drafts --exclude-pre-releases -L 200 --json tagName -q '.[].tagName')
+            for series in $(jq -r '.engines.valkey.series | join(" ")' dbservers/sources.json); do
+              newest=$(grep -E "^${series//./\\.}\.[0-9]+$" <<<"$tags" | sort -t. -k1,1n -k2,2n -k3,3n | tail -n1 || true)
+              if [ -n "$newest" ]; then list="$list $newest"; else echo "::warning::no Valkey release for series $series"; fi
+            done
+          fi
+          todo=()
+          for version in $list; do
+            [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::not a version: $version"; exit 1; }
+            if [ "$FORCE" != 1 ] && gh release view "valkey-$version" >/dev/null 2>&1; then
+              echo "valkey-$version already released"
+              continue
+            fi
+            todo+=("$version")
+          done
+          json=$(printf '%s\n' "${todo[@]}" | jq -R . | jq -cs 'map(select(length > 0))')
+          echo "to build: $json"
+          echo "versions=$json" >>"$GITHUB_OUTPUT"
+
+  build-macos:
+    needs: resolve
+    if: needs.resolve.outputs.versions != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJSON(needs.resolve.outputs.versions) }}
+        target:
+          - { runner: macos-15, platform: darwin-arm64 }
+          - { runner: macos-15-intel, platform: darwin-x64 }
+    runs-on: ${{ matrix.target.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build, check linkage, smoke test, package
+        env:
+          VERSION: ${{ matrix.version }}
+          PLATFORM: ${{ matrix.target.platform }}
+        run: bash dbservers/scripts/build-valkey-macos.sh "$VERSION" "$PLATFORM"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: valkey-${{ matrix.version }}-${{ matrix.target.platform }}
+          path: dist/
+          if-no-files-found: error
+
+  build-windows:
+    needs: resolve
+    if: needs.resolve.outputs.versions != '[]'
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJSON(needs.resolve.outputs.versions) }}
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MSYS
+          update: true
+          install: gcc make pkg-config tar curl
+      - name: Build, smoke test (PING and a forked BGSAVE), package
+        env:
+          VERSION: ${{ matrix.version }}
+        run: bash dbservers/scripts/build-valkey-windows.sh "$VERSION"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: valkey-${{ matrix.version }}-win32-x64
+          path: dist/
+          if-no-files-found: error
+
+  release:
+    needs: [resolve, build-macos, build-windows]
+    if: always() && needs.resolve.outputs.versions != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJSON(needs.resolve.outputs.versions) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: valkey-${{ matrix.version }}-*
+          path: dist
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ matrix.version }}
+          FORCE: ${{ inputs.force && '1' || '0' }}
+        run: |
+          cd dist
+          for platform in darwin-arm64 darwin-x64; do
+            [ -f "valkey-$VERSION-$platform.tar.gz" ] || { echo "::error::no $platform build for $VERSION, not releasing"; exit 1; }
+          done
+          sha256sum -c ./*.sha256
+          [ -f "valkey-$VERSION-win32-x64.tar.gz" ] || echo "::warning::Windows spike did not produce a build for $VERSION"
+          tar -xzf "valkey-$VERSION-darwin-arm64.tar.gz" --strip-components=1 "valkey-$VERSION-darwin-arm64/LICENSE"
+          {
+            echo "Valkey $VERSION built for J2TEAM Code from"
+            echo "https://github.com/valkey-io/valkey/archive/refs/tags/$VERSION.tar.gz"
+            echo "(source sha256 checked against valkey-io/valkey-hashes), with BUILD_TLS=no."
+            echo
+            echo "License: BSD-3-Clause (see LICENSE). The Windows build, when present, is built"
+            echo "with MSYS2 and carries the msys-2.0.dll runtime (LGPL-3.0)."
+            echo
+            echo '```'
+            cat ./*.sha256
+            echo '```'
+          } >../notes.md
+          if [ "$FORCE" = 1 ] && gh release view "valkey-$VERSION" >/dev/null 2>&1; then
+            gh release delete "valkey-$VERSION" --cleanup-tag --yes
+          fi
+          gh release create "valkey-$VERSION" --latest=false --target "$GITHUB_SHA" \
+            --title "Valkey $VERSION" --notes-file ../notes.md ./*.tar.gz ./*.sha256 LICENSE

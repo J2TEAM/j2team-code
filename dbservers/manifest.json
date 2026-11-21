@@ -1,0 +1,193 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-11-21T10:30:19.422Z",
+  "engines": {
+    "mysql": {
+      "defaultVersion": "8.4.13",
+      "versions": [
+        {
+          "version": "9.7.4",
+          "major": 9,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-9.7/mysql-9.7.4-macos15-arm64.tar.gz",
+              "sha256": "abf378ff27753325c908d687a3060f025c58b6530eda53ff4a0c6fc5ff3d7716",
+              "sizeBytes": 174454473,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "15.0",
+              "license": "GPL-2.0-only"
+            },
+            "darwin-x64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-9.7/mysql-9.7.4-macos15-x86_64.tar.gz",
+              "sha256": "4d5e110fe4e8fc87d6a4c30355096914be2606687cb5818a353190764302c26a",
+              "sizeBytes": 181509239,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "15.0",
+              "license": "GPL-2.0-only"
+            },
+            "win32-x64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-9.7/mysql-9.7.4-winx64.zip",
+              "sha256": "641bdaf01004927194c561b956f14f915a3166c9b0f9b1b5464ae63152bf4b96",
+              "sizeBytes": 344052123,
+              "format": "zip",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "GPL-2.0-only"
+            }
+          }
+        },
+        {
+          "version": "8.4.13",
+          "major": 8,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.13-macos15-arm64.tar.gz",
+              "sha256": "f324f8950e24d4147470bbc6a6ef0b90ef93b91d3fc74154b3d2ba085b44912a",
+              "sizeBytes": 165362783,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "15.0",
+              "license": "GPL-2.0-only"
+            },
+            "win32-x64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.13-winx64.zip",
+              "sha256": "e9cd98b1d23f122987b1afca26ad942efec5891481103d48ae3cde237fa3ea54",
+              "sizeBytes": 281154912,
+              "format": "zip",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "GPL-2.0-only"
+            }
+          }
+        },
+        {
+          "version": "8.4.11",
+          "major": 8,
+          "platforms": {
+            "darwin-x64": {
+              "url": "https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.11-macos15-x86_64.tar.gz",
+              "sha256": "90e8aea10698d01b978f0179e72e8d5e2cbe9f9bd5771e88b0b75d7c82244d3f",
+              "sizeBytes": 171974960,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "15.0",
+              "license": "GPL-2.0-only"
+            }
+          }
+        },
+        {
+          "version": "8.0.46",
+          "major": 8,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.46-macos15-arm64.tar.gz",
+              "sha256": "6ca4a361a45f5019fbf6d500997986b4aaf6f0e30ff9c41179d1e8ecd635f3db",
+              "sizeBytes": 172353282,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "15.0",
+              "license": "GPL-2.0-only"
+            },
+            "darwin-x64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.46-macos15-x86_64.tar.gz",
+              "sha256": "8590bc6c3203fe17f51f757dc9132fb755d1b73cbdad9d12a67f85025a3c3b8f",
+              "sizeBytes": 176499229,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "minOsVersion": "15.0",
+              "license": "GPL-2.0-only"
+            },
+            "win32-x64": {
+              "url": "https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.46-winx64.zip",
+              "sha256": "28e9eda019d88eff4478d811ea2110b83f02a3966be157fe91cc55def3ab0d4d",
+              "sizeBytes": 248009349,
+              "format": "zip",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "GPL-2.0-only"
+            }
+          }
+        }
+      ]
+    },
+    "mongodb": {
+      "defaultVersion": "8.0.38",
+      "versions": [
+        {
+          "version": "8.0.38",
+          "major": 8,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-8.0.38.tgz",
+              "sha256": "5c372533187a7789b6b2f4d7856f0651557dfbed572dbe5f4c23f43578fc74df",
+              "sizeBytes": 81861720,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "SSPL-1.0"
+            },
+            "darwin-x64": {
+              "url": "https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-8.0.38.tgz",
+              "sha256": "2ae70efb0aaa182477a96f5dc9062ec03d048cf98528d87c20328219020c14c1",
+              "sizeBytes": 88730304,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "SSPL-1.0"
+            },
+            "win32-x64": {
+              "url": "https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-8.0.38.zip",
+              "sha256": "85147ae32f9bb9a2e5a0a3875b0ffcc4423ab7a49bc4f75cb4bbc9811883d3de",
+              "sizeBytes": 809171598,
+              "format": "zip",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "SSPL-1.0"
+            }
+          }
+        },
+        {
+          "version": "7.0.48",
+          "major": 7,
+          "platforms": {
+            "darwin-arm64": {
+              "url": "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-7.0.48.tgz",
+              "sha256": "e276808c384259de99c39163147d8814f2b42e39ee1283cada29a8753fc3eb04",
+              "sizeBytes": 70804877,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "SSPL-1.0"
+            },
+            "darwin-x64": {
+              "url": "https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-7.0.48.tgz",
+              "sha256": "990d743ac6c405e0a2713bd5ffc01966b3349a910dbf0ced05eb37484c40e54f",
+              "sizeBytes": 76362466,
+              "format": "tar.gz",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "SSPL-1.0"
+            },
+            "win32-x64": {
+              "url": "https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-7.0.48.zip",
+              "sha256": "7f2e23e8bdd794fc89179d3e683726e75949020b3e690727a2faf1859df773ac",
+              "sizeBytes": 636894850,
+              "format": "zip",
+              "stripComponents": 1,
+              "binDir": "bin",
+              "license": "SSPL-1.0"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

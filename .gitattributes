@@ -1,0 +1,9 @@
+# Scripts run on Windows runners too (MSYS2 bash, Node): keep LF so core.autocrlf
+# cannot turn `set -euo pipefail` into `set -euo pipefail\r`.
+*.sh text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+# Signed bytes: never let git rewrite them.
+dbservers/manifest.json -text
+dbservers/manifest.json.sig -text

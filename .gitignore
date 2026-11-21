@@ -1,0 +1,7 @@
+# Signing keys never belong here: the private key lives only in the MANIFEST_SIGNING_KEY secret.
+*.key
+*private*.pem
+*-signing-key*
+# Build output from dbservers/scripts/build-valkey-*.sh
+dist/
+.DS_Store

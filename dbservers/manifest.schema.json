@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/J2TEAM/j2team-code/main/dbservers/manifest.schema.json",
+  "title": "J2TEAM Code database server binaries manifest",
+  "description": "Signed list of database server archives the J2TEAM Code daemon may download. manifest.json.sig holds a base64 ed25519 signature over the exact bytes of manifest.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "generatedAt", "engines"],
+  "properties": {
+    "schema": { "const": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "engines": {
+      "type": "object",
+      "description": "An engine with no published build yet is left out.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "postgresql": { "$ref": "#/$defs/engine" },
+        "mysql": { "$ref": "#/$defs/engine" },
+        "valkey": { "$ref": "#/$defs/engine" },
+        "mongodb": { "$ref": "#/$defs/engine" }
+      }
+    }
+  },
+  "$defs": {
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultVersion", "versions"],
+      "properties": {
+        "defaultVersion": {
+          "type": "string",
+          "description": "One of versions[].version."
+        },
+        "versions": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Newest first.",
+          "items": { "$ref": "#/$defs/version" }
+        }
+      }
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "major", "platforms"],
+      "properties": {
+        "version": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+){1,2}$" },
+        "major": { "type": "integer", "minimum": 1 },
+        "platforms": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "darwin-arm64": { "$ref": "#/$defs/build" },
+            "darwin-x64": { "$ref": "#/$defs/build" },
+            "win32-x64": { "$ref": "#/$defs/build" }
+          }
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "sha256", "sizeBytes", "format", "stripComponents", "binDir", "license"],
+      "properties": {
+        "url": { "type": "string", "pattern": "^https://" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "sizeBytes": { "type": "integer", "minimum": 1 },
+        "format": { "enum": ["tar.gz", "tar.xz", "zip"] },
+        "stripComponents": { "type": "integer", "minimum": 0 },
+        "binDir": {
+          "type": "string",
+          "description": "Folder holding the server binaries, relative to the extracted root after stripComponents.",
+          "pattern": "^(?!/)(?!(.*/)?\\.\\.(/|$))[^\\\\]+$"
+        },
+        "minOsVersion": {
+          "type": "string",
+          "description": "Lowest OS version the build runs on, as major.minor (macOS 15.0).",
+          "pattern": "^[0-9]+\\.[0-9]+$"
+        },
+        "license": { "type": "string", "description": "SPDX identifier." }
+      }
+    }
+  }
+}

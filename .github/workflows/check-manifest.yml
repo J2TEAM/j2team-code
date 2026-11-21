@@ -1,0 +1,32 @@
+# Any change to the manifest or its scripts must keep a valid shape and, once the repository
+# has a signing key, a signature that matches the committed public key.
+name: Check manifest
+
+on:
+  push:
+    branches: [main]
+    paths: ['dbservers/**', '.github/workflows/*manifest*.yml']
+  pull_request:
+    paths: ['dbservers/**', '.github/workflows/*manifest*.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Shape and signature
+        run: |
+          if [ -f dbservers/manifest.json.sig ]; then
+            node dbservers/scripts/verify-manifest.mjs --no-download
+          else
+            echo "::warning::dbservers/manifest.json is not signed yet: checking its shape only"
+            node dbservers/scripts/verify-manifest.mjs --no-download --no-signature
+          fi
+      - name: Shell scripts parse
+        run: for f in dbservers/scripts/*.sh; do bash -n "$f"; done

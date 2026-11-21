@@ -1,0 +1,97 @@
+# Rebuilds dbservers/manifest.json from MongoDB's current.json, MySQL's CDN and this
+# repository's postgresql-*/valkey-* releases, verifies every archive, signs it with the
+# MANIFEST_SIGNING_KEY secret and opens (or updates) a pull request.
+name: Refresh manifest
+
+on:
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Mirror PostgreSQL, Build Valkey]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-manifest
+  cancel-in-progress: false
+
+env:
+  BRANCH: refresh-dbservers-manifest
+
+jobs:
+  refresh:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Install bsdtar (lists zip archives for the layout check)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libarchive-tools
+
+      - name: Generate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node dbservers/scripts/generate-manifest.mjs
+
+      # Also (re)sign an unchanged manifest whose signature is missing or from an old key:
+      # the first run after setup and a key rotation both land here.
+      - name: Anything new?
+        id: diff
+        run: |
+          if ! git diff --quiet -- dbservers/manifest.json; then
+            echo "changed=true" >>"$GITHUB_OUTPUT"
+            git diff --stat -- dbservers/manifest.json
+          elif ! node dbservers/scripts/verify-manifest.mjs --no-download; then
+            echo "changed=true" >>"$GITHUB_OUTPUT"
+            echo "manifest unchanged but its signature does not verify: re-signing"
+          else
+            echo "changed=false" >>"$GITHUB_OUTPUT"
+            echo "manifest unchanged and signed"
+          fi
+
+      - name: Verify every archive (sha256, size, layout)
+        if: steps.diff.outputs.changed == 'true'
+        run: node dbservers/scripts/verify-manifest.mjs --no-signature
+
+      - name: Sign
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          MANIFEST_SIGNING_KEY: ${{ secrets.MANIFEST_SIGNING_KEY }}
+        run: |
+          if [ -z "$MANIFEST_SIGNING_KEY" ]; then
+            echo "::error::secret MANIFEST_SIGNING_KEY is not set (see dbservers/README.md)"
+            exit 1
+          fi
+          node dbservers/scripts/sign-manifest.mjs
+          node dbservers/scripts/verify-manifest.mjs --no-download
+
+      - name: Open or update the pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -C "$BRANCH"
+          git add dbservers/manifest.json dbservers/manifest.json.sig
+          git commit -m "chore(dbservers): refresh manifest"
+          git push --force origin "$BRANCH"
+          summary=$(node -e '
+            const m = JSON.parse(require("fs").readFileSync("dbservers/manifest.json", "utf8"))
+            for (const [e, { defaultVersion, versions }] of Object.entries(m.engines))
+              console.log(`- ${e}: ${versions.map((v) => v.version).join(", ")} (default ${defaultVersion})`)')
+          body=$(printf 'Weekly refresh of `dbservers/manifest.json`, verified (sha256, size, extracted layout) and signed.\n\n%s\n' "$summary")
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number -q '.[].number')" ]; then
+            gh pr create --base main --head "$BRANCH" --title "chore(dbservers): refresh manifest" --body "$body"
+          else
+            gh pr edit "$BRANCH" --body "$body"
+          fi

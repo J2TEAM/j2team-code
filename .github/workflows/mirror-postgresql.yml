@@ -1,0 +1,37 @@
+# Mirrors theseus-rs/postgresql-binaries (macOS arm64/x64, Windows x64) for the majors in
+# dbservers/sources.json as releases `postgresql-<version>`. Already mirrored versions are skipped.
+name: Mirror PostgreSQL
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+    inputs:
+      majors:
+        description: Space-separated majors (blank = every series in sources.json)
+        required: false
+        default: ''
+      force:
+        description: Re-create a release that already exists
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-postgresql
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - name: Mirror the newest release of each major
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAJORS: ${{ inputs.majors }}
+          FORCE: ${{ inputs.force && '1' || '0' }}
+        run: bash dbservers/scripts/mirror-postgresql.sh
