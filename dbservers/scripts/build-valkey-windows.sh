@@ -20,16 +20,42 @@ src="$work/valkey-$version"
 sed -i 's/__GNU_VISIBLE/1/' /usr/include/dlfcn.h
 sed -i 's/^all: \(.*\) module_tests$/all: \1/' "$src/src/Makefile" || true
 
-make -C "$src" -j"$(nproc)" BUILD_TLS=no USE_SYSTEMD=no MALLOC=libc CFLAGS="-Wno-char-subscripts" valkey-server valkey-cli
+# Cygwin has no epoll or kqueue, so Valkey uses its select() backend, and newlib's
+# FD_SETSIZE defaults to 64. Valkey 9.2 refuses an event loop larger than FD_SETSIZE
+# ("Failed creating the event loop"); older versions start but overrun fd_set past ~60
+# connections. 16384 covers the default maxclients 10000 plus Valkey's 128 reserved fds,
+# and Cygwin's select() sizes its sets from nfds, so a larger fd_set is safe.
+fd_setsize=${VALKEY_FD_SETSIZE:-16384}
+make -C "$src" -j"$(nproc)" BUILD_TLS=no USE_SYSTEMD=no MALLOC=libc CFLAGS="-Wno-char-subscripts -DFD_SETSIZE=$fd_setsize" valkey-server valkey-cli
 
 server="$src/src/valkey-server.exe"
 cli="$src/src/valkey-cli.exe"
+many_clients=${SMOKE_CLIENTS:-300}
 
 data=$(mktemp -d)
 "$server" --port "$smoke_port" --bind 127.0.0.1 --dir "$data" --save '' &
 server_pid=$!
-for _ in $(seq 1 100); do "$cli" -p "$smoke_port" ping 2>/dev/null | grep -q PONG && break; sleep 0.2; done
+# A server left running keeps the step's output pipe open and the job hangs.
+trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+# Each refused connect takes seconds on Windows, so stop as soon as the server is gone.
+for _ in $(seq 1 100); do
+  kill -0 "$server_pid" 2>/dev/null || { echo "::error::valkey-server.exe exited during startup"; exit 1; }
+  "$cli" -p "$smoke_port" ping 2>/dev/null | grep -q PONG && break
+  sleep 0.2
+done
 [ "$("$cli" -p "$smoke_port" ping | tr -d '\r')" = PONG ] || { echo "::error::valkey-server.exe did not answer PING"; exit 1; }
+
+# More connections than the default FD_SETSIZE, to prove the select() sets really grew.
+fds=()
+for _ in $(seq 1 "$many_clients"); do
+  exec {fd}<>"/dev/tcp/127.0.0.1/$smoke_port"
+  fds+=("$fd")
+done
+connected=$("$cli" -p "$smoke_port" info clients | tr -d '\r' | awk -F: '$1 == "connected_clients" { print $2 }')
+[ "${connected:-0}" -gt "$many_clients" ] || { echo "::error::only ${connected:-0} of $many_clients extra clients connected"; exit 1; }
+[ "$("$cli" -p "$smoke_port" ping | tr -d '\r')" = PONG ] || { echo "::error::no PING answer with $many_clients clients open"; exit 1; }
+for fd in "${fds[@]}"; do exec {fd}>&-; done
+echo "smoke: $connected clients connected at once"
 "$cli" -p "$smoke_port" set j2team ok >/dev/null
 # BGSAVE forks: this is the part a Windows build is most likely to get wrong.
 "$cli" -p "$smoke_port" bgsave >/dev/null

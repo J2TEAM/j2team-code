@@ -112,11 +112,18 @@ rewrites, and on other POSIX APIs. The `build-windows` job tries what
 [redis-windows](https://github.com/redis-windows/redis-windows) does for Redis: build inside
 MSYS2's POSIX (`msys`) environment, where `msys-2.0.dll` (the Cygwin runtime) emulates `fork()`,
 and ship that DLL plus every other `msys-*.dll` the binaries load (found with `ldd`). Its smoke
-test includes a forked `BGSAVE`.
+test includes a forked `BGSAVE` and 300 connections open at once.
 
-Status: written but not yet run, since it needs a Windows runner. The job is
-`continue-on-error`. When it fails, the release simply has no Windows archive and the manifest
-lists Valkey for macOS only. Known costs of this route, should it work:
+Cygwin has no epoll or kqueue, so Valkey falls back to `select()`, and newlib caps
+`FD_SETSIZE` at 64. Valkey 9.2 refuses to start with an event loop bigger than that ("Failed
+creating the event loop"); 8.1 and 9.0 start but overrun `fd_set` once about 60 connections
+are open. The build passes `-DFD_SETSIZE=16384` (`VALKEY_FD_SETSIZE` to change it), which
+covers the default `maxclients` of 10000; Cygwin's `select()` sizes its sets from `nfds`.
+
+Status: 8.1.12 and 9.0.8 built and passed the first smoke test (PING, forked BGSAVE) on
+windows-latest before the `FD_SETSIZE` fix; rebuild them with `force` so they get it. The job
+is `continue-on-error`. When it fails, the release simply has no Windows archive and the
+manifest lists Valkey for macOS only. Known costs of this route:
 
 - `fork()` under Cygwin copies the whole address space, so `BGSAVE` and AOF rewrites are slow
   and memory-hungry on large datasets. Fine for local development, not for production.
